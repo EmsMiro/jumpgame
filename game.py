@@ -17,12 +17,12 @@ obstacles = build("levelonemap_obstacles.csv", TILE_SIZE)
 mushrooms = build("levelonemap_mushrooms.csv", TILE_SIZE)
 
 #sprites do personagem
-#color_key = (0,0,0)
-#gabe_stand = Sprite("gabe.png", (0,0,32,32), 2, color_key, 30)
-#gabe_walk = Sprite("gabe.png", (0,0,32,32), 4, color_key, 5)
+color_key = (0,0,0)
+redpanda_stand = Sprite("redpanda.png", (0,32,32,32), 4, color_key, 10)
+redpanda_walk = Sprite("redpanda.png", (0,64,32,32), 8, color_key, 5)
 
 #criando o personagem principal
-player = Actor ("p_right")
+player = SpriteActor (redpanda_stand)
 player.bottomleft = (10, HEIGHT - TILE_SIZE)
 # variáveis de controle do personagem
 player.velocity_x = 3
@@ -67,7 +67,8 @@ def update():
     # controle de movimento p/esquerda
     if keyboard.LEFT and player.midleft[0] > 0:
         player.x -= player.velocity_x
-        player.image = "p_left"
+        player.sprite = redpanda_walk
+        player.flip_x = True #espelhar o sprite do personagem p/esquerda
         # se o personagem colidir com a plata forma
         if player.collidelist(platforms) != -1:
             # seleciona o objeto com o qual ele colidiu
@@ -77,7 +78,8 @@ def update():
     #controle de movimento p/direita
     elif keyboard.RIGHT and player.midright[0] < WIDTH:
         player.x += player.velocity_x
-        player.image = "p_right"
+        player.sprite = redpanda_walk
+        player.flip_x = False #mantém o espelhamento do sprite p/direita
          # se o personagem colidir com a plata forma
         if player.collidelist(platforms) != -1:
             # seleciona o objeto com o qual ele colidiu
@@ -117,4 +119,13 @@ def on_key_down(key):
     if key == keys.UP and not player.jumping:
         player.velocity_y = jump_velocity
         player.jumping = True
+
+def on_key_up(key):
+    if key == keys.LEFT or key == keys.RIGHT:
+        player.sprite = redpanda_stand
+        # mantém o flip_x correto dependendo da última direção
+        if key == keys.LEFT:
+            player.flip_x = True
+        elif key == keys.RIGHT:
+            player.flip_x = False
 pgzrun.go()
