@@ -28,6 +28,9 @@ play_button = Rect(WIDTH//2 - 75, HEIGHT//2 - 25, 150, 50)
 #botão musica on/off
 music_button = Rect(WIDTH//2 - 75, HEIGHT//2 + 40, 150, 50)
 
+#botão exit
+exit_button = Rect(WIDTH//2 - 75, HEIGHT//2 + 105, 150, 50)
+
 #construção do mapa
 platforms = build("levelonemap_plataforms.csv", TILE_SIZE)
 obstacles = build("levelonemap_obstacles.csv", TILE_SIZE)
@@ -75,13 +78,17 @@ def draw():
         screen.blit(menu_background, (0, 0))  # Aplica o fundo desfocado
         screen.draw.text("Jump Game", center=(WIDTH // 2, HEIGHT // 4), fontsize=50, color="white")
         #botão play/start game
-        screen.draw.filled_rect(play_button, "orange")
-        screen.draw.text("Play", center=play_button.center, fontsize=30, color="white")
+        screen.draw.filled_rect(play_button, "green")
+        screen.draw.text("PLAY", center=play_button.center, fontsize=30, color="white")
 
         #botão music on/off
-        screen.draw.filled_rect(music_button, "gray")
+        screen.draw.filled_rect(music_button, "orange")
         music_text = "MUSIC ON" if music_on else "Music OFF"
         screen.draw.text(music_text, center=music_button.center, fontsize=30)
+
+        #botão exit
+        screen.draw.filled_rect(exit_button, "red")
+        screen.draw.text("EXIT", center=exit_button.center, fontsize=30, color="white")
         
     elif game_state == "game":
         screen.fill("skyblue")  # Fundo do jogo        
@@ -192,6 +199,8 @@ def on_mouse_down(pos):
         game_state = "game"  # troca pro jogo
     elif music_button.collidepoint(pos):
         toggle_music() #alterna o estado da música
+    elif exit_button.collidepoint(pos):
+        pgzrun.quit()
         
     
 
