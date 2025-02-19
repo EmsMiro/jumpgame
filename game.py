@@ -51,6 +51,9 @@ jump_velocity = -10
 over = False
 win = False
 
+#variáveis do mapa
+score = 0
+
 #função q inicia a múscia
 def toggle_music():
     global music_on
@@ -79,8 +82,7 @@ def draw():
         screen.draw.text(music_text, center=music_button.center, fontsize=30)
         
     elif game_state == "game":
-        screen.fill("skyblue")  # Fundo do jogo
-        
+        screen.fill("skyblue")  # Fundo do jogo        
             
         #desenhando todas as camadas das plataformas
         for plataform in platforms:
@@ -97,7 +99,10 @@ def draw():
         #função que desenha o personagem
         if player.alive:
             player.draw()
-    
+        
+        #criando o score no canto superior direito da tela
+        screen.draw.text(f"Score: {score}", (WIDTH - 120, 10), fontsize=30, color="black")
+
     # mostra mensagem de game over
     if over:
         screen.draw.text("GAME OVER", center=(WIDTH/2, HEIGHT/2))
@@ -106,9 +111,9 @@ def draw():
 
 
 def update():
-    global over, win
+    global over, win, score
     if game_state == "game":
-        pass  # Atualizações do jogo serão adicionadas aqui futuramente
+        pass  
     # controle de movimento p/esquerda
     if keyboard.LEFT and player.midleft[0] > 0:
         player.x -= player.velocity_x
@@ -158,6 +163,7 @@ def update():
             if player.colliderect(mushroom):
                 coin_sound.play() #som de coleta de objeto
                 mushrooms.remove(mushroom)
+                score += 1 #aumenta o placar do score de cogumelos
         if len(mushrooms) == 0:
             win = True
 
