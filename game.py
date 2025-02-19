@@ -1,7 +1,7 @@
 import pgzrun
 from plataformer import * 
 
-# constantes da plataforma
+# constantes do mapa
 TILE_SIZE = 18
 ROWS = 50
 COLS = 30
@@ -10,6 +10,16 @@ COLS = 30
 WIDTH = TILE_SIZE * ROWS
 HEIGHT = TILE_SIZE * COLS
 TITLE = "Jump Game"
+game_state = "menu" #estado inicial do game, na menu inicial
+
+# cria a camada do menu inicial
+menu_background = pygame.Surface((WIDTH, HEIGHT))
+menu_background.fill((100, 100, 255))  # cor azulada para o fundo 
+menu_background.set_alpha(150)  # efeito de desfoque
+
+# botão "Play"
+play_button = Rect(WIDTH//2 - 75, HEIGHT//2 - 25, 150, 50)
+
 
 #construção do mapa
 platforms = build("levelonemap_plataforms.csv", TILE_SIZE)
@@ -38,23 +48,32 @@ win = False
 
 def draw():
     screen.clear()
-    screen.fill("skyblue")
+    #screen.fill("skyblue")
+    if game_state == "menu":
+        screen.blit(menu_background, (0, 0))  # Aplica o fundo desfocado
+        screen.draw.text("Jump Game", center=(WIDTH // 2, HEIGHT // 4), fontsize=50, color="white")
+        screen.draw.filled_rect(play_button, "orange")
+        screen.draw.text("Play", center=play_button.center, fontsize=30, color="white")
     
-    #desenhando todas as camadas das plataformas
-    for plataform in platforms:
-        plataform.draw()
+    elif game_state == "game":
+        screen.fill("skyblue")  # Fundo do jogo
+        
+            
+        #desenhando todas as camadas das plataformas
+        for plataform in platforms:
+            plataform.draw()
 
-    #desenhando todos as camadas de obstáculos
-    for obstacle in obstacles:
-        obstacle.draw()
+        #desenhando todos as camadas de obstáculos
+        for obstacle in obstacles:
+            obstacle.draw()
 
-    #desenhando todos os cogumelos coletáveis das camadas
-    for mushroom in mushrooms:
-        mushroom.draw()
+        #desenhando todos os cogumelos coletáveis das camadas
+        for mushroom in mushrooms:
+            mushroom.draw()
 
-    #função que desenha o personagem
-    if player.alive:
-        player.draw()
+        #função que desenha o personagem
+        if player.alive:
+            player.draw()
     
     # mostra mensagem de game over
     if over:
@@ -62,8 +81,11 @@ def draw():
     if win:
         screen.draw.text("YOU WIN!", center=(WIDTH/2, HEIGHT/2))
 
+
 def update():
     global over, win
+    if game_state == "game":
+        pass  # Atualizações do jogo serão adicionadas aqui futuramente
     # controle de movimento p/esquerda
     if keyboard.LEFT and player.midleft[0] > 0:
         player.x -= player.velocity_x
@@ -115,6 +137,7 @@ def update():
         if len(mushrooms) == 0:
             win = True
 
+
 def on_key_down(key):
     if key == keys.UP and not player.jumping:
         player.velocity_y = jump_velocity
@@ -128,4 +151,11 @@ def on_key_up(key):
             player.flip_x = True
         elif key == keys.RIGHT:
             player.flip_x = False
+
+def on_mouse_down(pos):
+    global game_state
+    
+    if game_state == "menu" and play_button.collidepoint(pos):
+        game_state = "game"  # troca pro jogo
+
 pgzrun.go()
