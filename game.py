@@ -1,16 +1,18 @@
 import pgzrun
 from plataformer import * 
 
-# constantes do mapa
+# constantes dos tiles
 TILE_SIZE = 18
 ROWS = 50
 COLS = 30
 
-# constantes dos tiles
+# constantes do mapa
 WIDTH = TILE_SIZE * ROWS
 HEIGHT = TILE_SIZE * COLS
 TITLE = "Jump Game"
 game_state = "menu" #estado inicial do game, na menu inicial
+music_on = True #estado inicial da música
+
 
 # cria a camada do menu inicial
 menu_background = pygame.Surface((WIDTH, HEIGHT))
@@ -20,6 +22,8 @@ menu_background.set_alpha(150)  # efeito de desfoque
 # botão "Play"
 play_button = Rect(WIDTH//2 - 75, HEIGHT//2 - 25, 150, 50)
 
+#botão musica on/off
+music_button = Rect(WIDTH//2 - 75, HEIGHT//2 + 40, 150, 50)
 
 #construção do mapa
 platforms = build("levelonemap_plataforms.csv", TILE_SIZE)
@@ -46,15 +50,33 @@ jump_velocity = -10
 over = False
 win = False
 
+#função q inicia a múscia
+def toggle_music():
+    global music_on
+    if music_on:
+        music.stop()
+    else:
+        music.play('happysong')
+    music_on = not music_on
+
+#toca a música ao iniciar o game
+music.play('happysong')
+
 def draw():
     screen.clear()
     #screen.fill("skyblue")
     if game_state == "menu":
         screen.blit(menu_background, (0, 0))  # Aplica o fundo desfocado
         screen.draw.text("Jump Game", center=(WIDTH // 2, HEIGHT // 4), fontsize=50, color="white")
+        #botão play/start game
         screen.draw.filled_rect(play_button, "orange")
         screen.draw.text("Play", center=play_button.center, fontsize=30, color="white")
-    
+
+        #botão music on/off
+        screen.draw.filled_rect(music_button, "gray")
+        music_text = "MUSIC ON" if music_on else "Music OFF"
+        screen.draw.text(music_text, center=music_button.center, fontsize=30)
+        
     elif game_state == "game":
         screen.fill("skyblue")  # Fundo do jogo
         
@@ -153,9 +175,13 @@ def on_key_up(key):
             player.flip_x = False
 
 def on_mouse_down(pos):
-    global game_state
+    global game_state, music_on
     
     if game_state == "menu" and play_button.collidepoint(pos):
         game_state = "game"  # troca pro jogo
+    elif music_button.collidepoint(pos):
+        toggle_music() #alterna o estado da música
+        
+    
 
 pgzrun.go()
