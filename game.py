@@ -12,6 +12,7 @@ HEIGHT = TILE_SIZE * COLS
 TITLE = "Jump Game"
 game_state = "menu" #estado inicial do game, na menu inicial
 music_on = True #estado inicial da música
+coin_sound = sounds.coin  # Carrega o som da moeda
 
 
 # cria a camada do menu inicial
@@ -155,6 +156,7 @@ def update():
         # verificação de colisão com os cogumelos
         for mushroom in mushrooms:
             if player.colliderect(mushroom):
+                coin_sound.play() #som de coleta de objeto
                 mushrooms.remove(mushroom)
         if len(mushrooms) == 0:
             win = True
